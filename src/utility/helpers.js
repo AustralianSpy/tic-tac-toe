@@ -1,5 +1,4 @@
-import { BORDER_SIDES } from "./constants";
-
+// ----> FUNCTIONS FOR DECIDING WINNING CONDITIONS.
 export function checkWinner(player, board){
   const val = player === 1 ? "O" : "X";
 
@@ -43,6 +42,7 @@ function checkDiagonals(val, board){
   return (diagonalOne.every(item => item === val) || diagonalTwo.every(item => item === val))
 }
 
+// ----> DYNAMIC STYLING OF BOXES.
 export function makeBorders(index) {
   let style = "";
 
@@ -64,6 +64,8 @@ export function makeBorders(index) {
     case 7:
       style = "middle-bottom";
       break;
+    default:
+      style = "";
   }
 
 
