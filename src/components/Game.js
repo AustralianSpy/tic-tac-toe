@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { INITIAL_BOARD, DRAW_CONDITIONS } from "../utility/constants";
 import { checkWinner } from '../utility/helpers';
 import Box from './Box';
@@ -14,33 +14,31 @@ export default function Game() {
   // -----> CHECK FOR COMPLETED BOARD AFTER EACH MOVE.
   useEffect(() => {
     if (moveCount === DRAW_CONDITIONS) setGameOver(true);
-  }, [moveCount])
+  }, [moveCount]);
 
-// Consider memo-izing with useCallback.
-  const handlePlayerMove = (symbol, index) => {
+  const handlePlayerMove = useCallback((symbol, index) => {
     if (!gameOver) {
       const newBoard = [...board];
       newBoard[index] = symbol;
+      setBoard(newBoard)
 
       if (checkWinner(player, newBoard)) {
         setWinner(player);
         setGameOver(true);
       } else {
-        setBoard(newBoard)
         setMoveCount((prev) => prev + 1);
         setPlayer((prev) => prev === 1 ? 2 : 1);
       }
     }
-  }
+  }, [board]);
 
   // ----> RESET HANDLER IF GAME-OVER IS MET.
-  // ----> Want to reset board without reload, unsure how.
   const handleResetGame = () => {
-    window.location.reload()
-    // setBoard([...INITIAL_BOARD]);
-    // setMoveCount(0);
-    // setGameOver(false);
-    // setPlayer(1);
+    setBoard([...INITIAL_BOARD]);
+    setMoveCount(0);
+    setGameOver(false);
+    setWinner(null);
+    setPlayer(1);
   }
 
   return (
@@ -52,11 +50,12 @@ export default function Game() {
               <h1>Player {player} is now playing...</h1>
       }
       <div className="game-board">
-        { board.map((square, index) => {
+        { board.map((symbol, index) => {
           return (
             <Box
-              key={`square+${index}`}
+              key={`square+${symbol}+${index}`}
               index={index}
+              symbol={symbol}
               player={player}
               isGameOver={gameOver}
               handleMove={handlePlayerMove}

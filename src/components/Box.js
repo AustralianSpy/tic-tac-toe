@@ -1,16 +1,18 @@
-import { useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { makeBorders } from "../utility/helpers";
 
-export default function Box({ index, player, isGameOver, handleMove }) {
+// ----> INDIVIDUAL BOXES WITHIN GAME BOARD.
+export default function Box({ index, symbol, player, isGameOver, handleMove }) {
   const [marked, setMarked] = useState(false);
-  const [symbol, setSymbol] = useState("");
 
-  const borders = useRef(makeBorders(index));
+  const borders = useMemo(
+    () => makeBorders(index), 
+    [index]
+  );
 
   const handleClicks = () => {
     if (!marked && !isGameOver) {
       let result = player === 1 ? "O" : "X";
-      setSymbol(result);
       setMarked(true);
       handleMove(result, index);
     }
@@ -19,7 +21,7 @@ export default function Box({ index, player, isGameOver, handleMove }) {
   return (
     <div 
       className={`game-square ${borders}`}
-      onClick={() => handleClicks()}>
+      onClick={handleClicks}>
       {symbol}
     </div>
   )
